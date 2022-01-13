@@ -1,0 +1,34 @@
+# mac files
+.DS_STORE
+
+# vscode
+.settings
+.settings/
+.project
+
+# java
+bin/
+.classpath
+target/
+
+# intellij
+*.idea
+.idea/
+*.iml
+
+*.class
+
+# more logs
+*.log
+
+# package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# vm logs
+hs_err_pid
