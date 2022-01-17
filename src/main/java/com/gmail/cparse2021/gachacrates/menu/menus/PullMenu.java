@@ -31,7 +31,8 @@ public class PullMenu extends Menu {
     private ItemStack backgroundItem = new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("&7").build();
     private ItemStack pullCountItem = new ItemBuilder(Material.NETHER_STAR).setDisplayName("&ePull %pull-count%x").build();
     private ItemStack decreasePullCountItem = new ItemBuilder(Material.IRON_INGOT).setDisplayName("&eDecrease Pull Count").build();
-    private ItemStack increasePullCountItem = new ItemBuilder(Material.GOLD_INGOT).setDisplayName("&eIncrease Pull Count").build();
+    private ItemStack increasePullCountItem = new ItemBuilder(Material.GOLD_INGOT).setDisplayName("&aIncrease Pull Count").build();
+    private ItemStack maxPullCountSelectorItem = new ItemBuilder(Material.DIAMOND).setDisplayName("&eMax Pull Count").build();
     private ItemStack pullItem = new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).setDisplayName("&aPull").build();
     private ItemStack backItem = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayName("&cBack").build();
     private ItemStack maxPullCountItem = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayName("&cMaximum Pull Count Reached").build();
@@ -57,6 +58,8 @@ public class PullMenu extends Menu {
                 "IRON_INGOT name:&cDecrease_Pull_Count lore:&7Click_to_&clower&7_your_pull_count_by_1"));
         increasePullCountItem = Utils.decodeItem(configurationSection.getString("Increase-Pull-Count-Item",
                 "GOLD_INGOT name:&aIncrease_Pull_Count lore:&7Click_to_&craise&7_your_pull_count_by_1"));
+        maxPullCountSelectorItem = Utils.decodeItem(configurationSection.getString("Max-Pull-Count-Selector-Item",
+                "DIAMOND name:&eMax_Pull_Count lore:&7Click_to_set_your_pull_count_to_the_max"));
         pullItem = Utils.decodeItem(configurationSection.getString("Pull-Item",
                 "LIME_STAINED_GLASS_PANE name:&aPull lore:&7Click_to_pull"));
         backItem = Utils.decodeItem(configurationSection.getString("Back-Item",
@@ -81,7 +84,8 @@ public class PullMenu extends Menu {
 
         inventory.setItem(4, pullCountItemBuilder.build());
         inventory.setItem(12, decreasePullCountItem);
-        inventory.setItem(14, increasePullCountItem);
+        inventory.setItem(13, increasePullCountItem);
+        inventory.setItem(14, maxPullCountSelectorItem);
         inventory.setItem(18, backItem);
         inventory.setItem(26, pullItem);
         player.openInventory(inventory);
@@ -127,7 +131,7 @@ public class PullMenu extends Menu {
             return;
         }
 
-        if (e.getSlot() == 14 && e.getCurrentItem() != null && e.getCurrentItem().isSimilar(increasePullCountItem)) {
+        if (e.getSlot() == 13 && e.getCurrentItem() != null && e.getCurrentItem().isSimilar(increasePullCountItem)) {
             if (pullCount >= gachaPlayer.getAvailablePulls(crateSession.getCrate()) || pullCount >= GachaConfig.MAX_PULLS) {
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 e.getInventory().setItem(e.getSlot(), maxPullCountItem);
@@ -144,6 +148,13 @@ public class PullMenu extends Menu {
             updatePullCountItem(player, pullCount);
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
             return;
+        }
+
+        if (e.getSlot() == 14 && e.getCurrentItem() != null && e.getCurrentItem().isSimilar(maxPullCountSelectorItem)) {
+            pullCount = Math.min(GachaConfig.MAX_PULLS, gachaPlayer.getAvailablePulls(crateSession.getCrate()));
+            pullCountMap.put(player.getUniqueId(), pullCount);
+            updatePullCountItem(player, pullCount);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1f);
         }
 
         if (e.getSlot() == 18) {
