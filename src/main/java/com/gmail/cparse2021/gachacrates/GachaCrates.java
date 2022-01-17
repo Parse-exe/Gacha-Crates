@@ -1,8 +1,6 @@
 package com.gmail.cparse2021.gachacrates;
 
-import com.gmail.cparse2021.gachacrates.cache.CrateCache;
-import com.gmail.cparse2021.gachacrates.cache.GachaConfig;
-import com.gmail.cparse2021.gachacrates.cache.PlayerCache;
+import com.gmail.cparse2021.gachacrates.cache.*;
 import com.gmail.cparse2021.gachacrates.commands.*;
 import com.gmail.cparse2021.gachacrates.file.CustomFile;
 import com.gmail.cparse2021.gachacrates.file.FileManager;
@@ -15,7 +13,6 @@ import com.gmail.cparse2021.gachacrates.menu.MenuManager;
 import com.gmail.cparse2021.gachacrates.menu.menus.CrateOpenMenu;
 import com.gmail.cparse2021.gachacrates.menu.menus.PullMenu;
 import com.gmail.cparse2021.gachacrates.menu.menus.RewardsMenu;
-import com.gmail.cparse2021.gachacrates.cache.SessionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -101,6 +98,7 @@ public class GachaCrates extends JavaPlugin {
         menusFile.saveDefaultConfig();
 
         GachaConfig.load(getConfig());
+        GachaConfig.validateConfig(ConfigType.MENUS, menusFile);
         crateCache.loadFrom(cratesFile.getConfig());
         playerCache.setFile(dataFile.getConfig());
         Lang.setFileConfiguration(langFile.getConfig());
