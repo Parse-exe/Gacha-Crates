@@ -20,9 +20,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CrateMenu extends Menu {
     private final GachaCrates plugin;
+    private final HashMap<UUID, ItemStack> offhandSnapshotMap = new HashMap<>();
     private String title = "Crate Menu";
     private ItemStack backgroundItem = new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("&7").build();
     private ItemStack pullItem = new ItemBuilder(Material.NETHER_STAR).setDisplayName("&e&lPull").build();
@@ -68,6 +70,7 @@ public class CrateMenu extends Menu {
         variables.put("%pull-count%", Integer.toString(gachaPlayer.getAvailablePulls(crate)));
         inventory.setItem(11, new ItemBuilder(pullItem.clone()).setVariables(variables).build());
         inventory.setItem(15, rewardsItem);
+        offhandSnapshotMap.put(player.getUniqueId(), player.getInventory().getItemInOffHand());
         player.openInventory(inventory);
         plugin.getMenuManager().setActiveMenu(player.getUniqueId(), this);
     }
@@ -115,6 +118,10 @@ public class CrateMenu extends Menu {
     @Override
     public void processClose(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
+
+        if (offhandSnapshotMap.containsKey(player.getUniqueId())) {
+            player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
+        }
 
         plugin.getMenuManager().clearActiveMenu(player.getUniqueId());
     }

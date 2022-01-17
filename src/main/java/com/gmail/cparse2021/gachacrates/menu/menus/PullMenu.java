@@ -27,6 +27,7 @@ import java.util.UUID;
 public class PullMenu extends Menu {
     private final GachaCrates plugin;
     private final HashMap<UUID, Integer> pullCountMap = new HashMap<>();
+    private final HashMap<UUID, ItemStack> offhandSnapshotMap = new HashMap<>();
     private String title = "Pull Menu";
     private ItemStack backgroundItem = new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("&7").build();
     private ItemStack pullCountItem = new ItemBuilder(Material.NETHER_STAR).setDisplayName("&ePull %pull-count%x").build();
@@ -88,6 +89,7 @@ public class PullMenu extends Menu {
         inventory.setItem(14, maxPullCountSelectorItem);
         inventory.setItem(18, backItem);
         inventory.setItem(26, pullItem);
+        offhandSnapshotMap.put(player.getUniqueId(), player.getInventory().getItemInOffHand());
         player.openInventory(inventory);
         plugin.getMenuManager().setActiveMenu(player.getUniqueId(), this);
     }
@@ -195,6 +197,10 @@ public class PullMenu extends Menu {
     @Override
     public void processClose(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
+
+        if (offhandSnapshotMap.containsKey(player.getUniqueId())) {
+            player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
+        }
 
         pullCountMap.remove(player.getUniqueId());
         plugin.getMenuManager().clearActiveMenu(player.getUniqueId());

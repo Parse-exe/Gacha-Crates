@@ -26,6 +26,7 @@ import java.util.*;
 
 public class RewardsMenu extends Menu {
     private final GachaCrates plugin;
+    private final HashMap<UUID, ItemStack> offhandSnapshotMap = new HashMap<>();
     private String title = "Rewards Menu";
     private ItemStack backgroundItem = new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("&7").build();
     private ItemStack borderItem = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).setDisplayName("&7").build();
@@ -148,6 +149,7 @@ public class RewardsMenu extends Menu {
         inventory.setItem(45, backItem);
         inventory.setItem(49, newPityItem);
         inventory.setItem(53, newRateItem);
+        offhandSnapshotMap.put(player.getUniqueId(), player.getInventory().getItemInOffHand());
         player.openInventory(inventory);
         pageMap.put(player.getUniqueId(), page);
     }
@@ -189,6 +191,10 @@ public class RewardsMenu extends Menu {
     @Override
     public void processClose(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
+
+        if (offhandSnapshotMap.containsKey(player.getUniqueId())) {
+            player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
+        }
 
         plugin.getMenuManager().clearActiveMenu(player.getUniqueId());
     }

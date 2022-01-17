@@ -25,9 +25,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class CrateOpenMenu extends Menu {
     private final GachaCrates plugin;
+    private final HashMap<UUID, ItemStack> offhandSnapshotMap = new HashMap<>();
     private String title = "&6&lPull Rewards";
     private ItemStack countdownItem3 = new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).setDisplayName("&7").build();
     private ItemStack countdownItem2 = new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).setDisplayName("&7").build();
@@ -113,6 +115,7 @@ public class CrateOpenMenu extends Menu {
 
         crateSession.setRewards(rewards);
         crateSession.setOpenPhase(CrateOpenPhase.OPENING);
+        offhandSnapshotMap.put(player.getUniqueId(), player.getInventory().getItemInOffHand());
         player.openInventory(inventory);
         plugin.getMenuManager().setActiveMenu(player.getUniqueId(), this);
     }
@@ -153,6 +156,10 @@ public class CrateOpenMenu extends Menu {
     public void processClose(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
         CrateSession crateSession = plugin.getSessionManager().getCrateSession(player.getUniqueId());
+
+        if (offhandSnapshotMap.containsKey(player.getUniqueId())) {
+            player.getInventory().setItemInOffHand(player.getInventory().getItemInOffHand());
+        }
 
         if (crateSession == null) {
             plugin.getMenuManager().clearActiveMenu(player.getUniqueId());
