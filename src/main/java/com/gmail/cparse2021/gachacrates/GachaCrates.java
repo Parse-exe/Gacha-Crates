@@ -98,7 +98,6 @@ public class GachaCrates extends JavaPlugin {
         menusFile.saveDefaultConfig();
 
         GachaConfig.load(getConfig());
-        GachaConfig.validateConfig(ConfigType.MENUS, menusFile);
         crateCache.loadFrom(cratesFile.getConfig());
         playerCache.setFile(dataFile.getConfig());
         Lang.setFileConfiguration(langFile.getConfig());
